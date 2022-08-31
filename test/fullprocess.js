@@ -22,6 +22,7 @@ class Groth16Scheme {
 		this.vKey;
 		this.proof;
 		this.publicSignals;
+		this.circuitName;
 	}
 
 	async powersOfTau() {
@@ -73,30 +74,34 @@ class Groth16Scheme {
 
 		// powersoftau verify
 		const res = await snarkjs.powersOfTau.verify(this.ptau_final);
-		assert(res);	
+		assert(res);
 	}
 
-	async calculateWtns(circuitName) {
-		let wtnsFilePath = `test/witness/${circuitName}.json`;
+	setCircuitName(circuitName) {
+		this.circuitName = circuitName;
+	}
+
+	async calculateWtns() {
+		let wtnsFilePath = `test/witness/${this.circuitName}.json`;
 		let witness = JSON.parse(fs.readFileSync(wtnsFilePath));
-		
+
 		// witness calculate
 		await snarkjs.wtns.calculate(
 			witness,
-			path.join("test", "circuit", `${circuitName}.wasm`),
+			path.join("test", "circuit", `${this.circuitName}.wasm`),
 			this.wtns
 		);
 	}
-	
-	async setup(circuitName) {
+
+	async setup() {
 		await snarkjs.zKey.newZKey(
-			path.join("test", "circuit", `${circuitName}.r1cs`),
+			path.join("test", "circuit", `${this.circuitName}.r1cs`),
 			this.ptau_final,
 			this.zkey_0
 		);
 	}
 
-	async phase2(circuitName) {
+	async phase2() {
 		await snarkjs.zKey.contribute(this.zkey_0, this.zkey_1, "p2_C1", "pa_Entropy1");
 		await snarkjs.zKey.exportBellman(this.zkey_1, this.bellman_1);
 		await snarkjs.zKey.bellmanContribute(
@@ -114,7 +119,7 @@ class Groth16Scheme {
 			10
 		);
 		const res = await snarkjs.zKey.verifyFromR1cs(
-			path.join("test", "circuit", `${circuitName}.r1cs`),
+			path.join("test", "circuit", `${this.circuitName}.r1cs`),
 	 		this.ptau_final,
 			this.zkey_final
 		);
@@ -138,7 +143,11 @@ class Groth16Scheme {
 	}
 
 	async verify() {
-		const res = await snarkjs.groth16.verify(vKey, publicSignals, proof);
+		const res = await snarkjs.groth16.verify(
+			this.vKey, 
+			this.publicSignals, 
+			this.proof
+		);
 		assert(res == true);	
 	}
 }
@@ -151,6 +160,7 @@ class PlonkScheme {
 		this.vKey;
 		this.proof;
 		this.publicSignals;
+		this.circuitName;
 	}
 
 	async powersOfTau() {
@@ -205,21 +215,25 @@ class PlonkScheme {
 		assert(res);
 	}
 
-	async calculateWtns(circuitName) {
-		let wtnsFilePath = `test/witness/${circuitName}.json`;
+	setCircuitName(circuitName) {
+		this.circuitName = circuitName;
+	}
+
+	async calculateWtns() {
+		let wtnsFilePath = `test/witness/${this.circuitName}.json`;
 		let witness = JSON.parse(fs.readFileSync(wtnsFilePath));
 		
 		// witness calculate
 		await snarkjs.wtns.calculate(
 			witness,
-			path.join("test", "circuit", `${circuitName}.wasm`),
+			path.join("test", "circuit", `${this.circuitName}.wasm`),
 			this.wtns
 		);
 	}
 
-	async setup(circuitName) {
+	async setup() {
 		await snarkjs.plonk.setup(
-			path.join("test", "circuit", `${circuitName}.r1cs`),
+			path.join("test", "circuit", `${this.circuitName}.r1cs`),
 			this.ptau_final,
 			this.zkey_plonk,
 			logger
@@ -253,39 +267,48 @@ let groth16 = new Groth16Scheme();
 // plonk test
 await plonk.powersOfTau();
 
-await plonk.calculateWtns('binsum');
-await plonk.setup('binsum');
+plonk.setCircuitName('binsum');
+await plonk.calculateWtns();
+await plonk.setup();
 await plonk.exportVerificationKey();
 
 it("generate plonk proof binsum", async () => {
 	await plonk.generateProof();
 });
+// plonk.verify();
 
-await plonk.calculateWtns('binsub');
-await plonk.setup('binsub');
+plonk.setCircuitName('binsub');
+await plonk.calculateWtns();
+await plonk.setup();
 await plonk.exportVerificationKey();
+
 
 it("generate plonk proof binsub", async () => {
 	await plonk.generateProof();
 });
+// plonk.verify();
 
 // groth16 test
 await groth16.powersOfTau();
 
-await groth16.calculateWtns('binsum');
-await groth16.setup('binsum');
-await groth16.phase2('binsum');
+groth16.setCircuitName('binsum');
+await groth16.calculateWtns();
+await groth16.setup();
+await groth16.phase2();
 await groth16.exportVerificationKey();
 
 it("generate groth16 proof for binsum", async () => {
 	await groth16.generateProof();
 });
+// groth16.verify();
 
-await groth16.calculateWtns('binsub');
-await groth16.setup('binsub');
-await groth16.phase2('binsub');
+groth16.setCircuitName('binsub');
+await groth16.calculateWtns();
+await groth16.setup();
+await groth16.phase2();
 await groth16.exportVerificationKey();
 
 it("generate groth16 proof for binsub", async () => {
 	await groth16.generateProof();
 });
+// groth16.verify();
