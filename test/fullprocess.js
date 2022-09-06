@@ -245,9 +245,9 @@ class PlonkScheme {
 	}
 
 	async generateProof() {
-		const res = await snarkjs.plonk.prove(this.zkey_plonk, this.wtns, logger);
-		this.proof = res.proof;
-		this.publicSignals = res.publicSignals;
+			const res = await snarkjs.plonk.prove(this.zkey_plonk, this.wtns, logger);
+			this.proof = res.proof;
+			this.publicSignals = res.publicSignals;
 	}
 
 	async verify() {
@@ -267,14 +267,14 @@ let groth16 = new Groth16Scheme();
 // plonk test
 await plonk.powersOfTau();
 
-plonk.setCircuitName('binsum');
-await plonk.calculateWtns();
-await plonk.setup();
-await plonk.exportVerificationKey();
+// plonk.setCircuitName('binsum');
+// await plonk.calculateWtns();
+// await plonk.setup();
+// await plonk.exportVerificationKey();
 
-it("generate plonk proof binsum", async () => {
-	await plonk.generateProof();
-});
+// it("generate plonk proof binsum", async () => {
+// 	await plonk.generateProof();
+// });
 // plonk.verify();
 
 plonk.setCircuitName('binsub');
@@ -283,32 +283,42 @@ await plonk.setup();
 await plonk.exportVerificationKey();
 
 
-it("generate plonk proof binsub", async () => {
-	await plonk.generateProof();
-});
+await plonk.generateProof();
 // plonk.verify();
 
 // groth16 test
-await groth16.powersOfTau();
+// await groth16.powersOfTau();
 
-groth16.setCircuitName('binsum');
-await groth16.calculateWtns();
-await groth16.setup();
-await groth16.phase2();
-await groth16.exportVerificationKey();
+// groth16.setCircuitName('batchUstCircuit');
+// await groth16.calculateWtns();
+// await groth16.setup();
+// await groth16.phase2();
+// await groth16.exportVerificationKey();
 
-it("generate groth16 proof for binsum", async () => {
-	await groth16.generateProof();
-});
+// it("generate groth16 proof for batchUstCircuit", async () => {
+// 	await groth16.generateProof();
+// });
 // groth16.verify();
 
-groth16.setCircuitName('binsub');
-await groth16.calculateWtns();
-await groth16.setup();
-await groth16.phase2();
-await groth16.exportVerificationKey();
 
-it("generate groth16 proof for binsub", async () => {
-	await groth16.generateProof();
-});
-// groth16.verify();
+// groth16.setCircuitName('binsum');
+// await groth16.calculateWtns();
+// await groth16.setup();
+// await groth16.phase2();
+// await groth16.exportVerificationKey();
+
+// it("generate groth16 proof for binsum", async () => {
+// 	await groth16.generateProof();
+// });
+// // groth16.verify();
+
+// groth16.setCircuitName('binsub');
+// await groth16.calculateWtns();
+// await groth16.setup();
+// await groth16.phase2();
+// await groth16.exportVerificationKey();
+
+// it("generate groth16 proof for binsub", async () => {
+// 	await groth16.generateProof();
+// });
+// // groth16.verify();

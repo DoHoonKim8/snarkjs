@@ -1,0 +1,6 @@
+{
+    "state_tree_depth": 4,
+    "message_tree_depth": 4,
+    "vote_options_tree_depth": 2,
+    "batch_size": 4
+}
