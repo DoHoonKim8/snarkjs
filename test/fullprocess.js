@@ -173,7 +173,7 @@ class PlonkScheme {
 		const ptau_response2 = { type: "mem" };
 
 		// powersoftau new
-		await snarkjs.powersOfTau.newAccumulator(curve, 11, ptau_0);
+		await snarkjs.powersOfTau.newAccumulator(curve, 20, ptau_0);
 
 		// powersoftau contribute
 		await snarkjs.powersOfTau.contribute(ptau_0, ptau_1, "C1", "Entropy1");
@@ -267,35 +267,35 @@ let groth16 = new Groth16Scheme();
 // plonk test
 await plonk.powersOfTau();
 
-// plonk.setCircuitName('binsum');
-// await plonk.calculateWtns();
-// await plonk.setup();
-// await plonk.exportVerificationKey();
-
-// it("generate plonk proof binsum", async () => {
-// 	await plonk.generateProof();
-// });
-// plonk.verify();
-
-plonk.setCircuitName('binsub');
+plonk.setCircuitName('processMessages');
 await plonk.calculateWtns();
 await plonk.setup();
 await plonk.exportVerificationKey();
 
+it("generate plonk proof processMessages", async () => {
+	await plonk.generateProof();
+});
+plonk.verify();
 
-await plonk.generateProof();
+// plonk.setCircuitName('binsub');
+// await plonk.calculateWtns();
+// await plonk.setup();
+// await plonk.exportVerificationKey();
+
+
+// await plonk.generateProof();
 // plonk.verify();
 
 // groth16 test
 // await groth16.powersOfTau();
 
-// groth16.setCircuitName('batchUstCircuit');
+// groth16.setCircuitName('processMessages');
 // await groth16.calculateWtns();
 // await groth16.setup();
 // await groth16.phase2();
 // await groth16.exportVerificationKey();
 
-// it("generate groth16 proof for batchUstCircuit", async () => {
+// it("generate groth16 proof for processMessages", async () => {
 // 	await groth16.generateProof();
 // });
 // groth16.verify();
